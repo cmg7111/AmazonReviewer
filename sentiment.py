@@ -3,8 +3,7 @@ import json
 import pymysql
 import sys
 
-comprehend = boto3.client(service_name='comprehend', aws_access_key_id='AKIAIPPPX7LY5NDOQOGA', aws_secret_access_key='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', region_name='us-east-1')
-conn = pymysql.connect(host='ec2-18-211-19-90.compute-1.amazonaws.com', user='root', password='root', db='reviewer', charset='utf8')       
+       
 
 curs = conn.cursor()
 
