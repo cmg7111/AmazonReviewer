@@ -1,0 +1,74 @@
+import sys
+import requests
+from bs4 import BeautifulSoup
+import math
+import pymysql
+
+#mysql 연결
+conn = pymysql.connect(host='
+
+#https://www.amazon.com/product-reviews/B078JGP3MG/ref=cm_cr_othr_d_paging_btm_1?ie=UTF8&reviewerType=all_reviews&pageNumber=1
+# ASIN은 아마존 제품코드
+
+#TARGET_URL_BEFORE_ASIN = "https://www.amazon.com/product-reviews/"
+TARGET_URL_REST = '/ref=cm_cr_othr_d_paging_btm_1?ie=UTF8&reviewerType=all_reviews&pageNumber='
+#ASIN = 'B078JGP3MG'
+
+
+#rating(별점) 추출 및 총 리뷰 갯수 추출
+def get_rating(URL,headers):
+    request = requests.session()
+    req = request.get(URL, headers=headers)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    rate = soup.findAll("span", {"data-hook": "rating-out-of-text"})
+    review = soup.findAll("span", {"data-hook": "total-review-count"})
+    #각 제품의 rating(별점) 정보
+    global rating
+    rating=rate[0].string[0:3]
+    print(rating)
+
+    global review_page_num
+    review_page_num=review[0].string.replace(",","")
+    review_page_num=math.ceil(int(review_page_num)/10)
+    if review_page_num>=3:
+        review_page_num=3
+    print(review_page_num)
+
+def main(argv):
+    name=argv[1]
+    read_file=open('link.txt','r',encoding='utf8')
+    write_file=open('review.txt','w',encoding='utf8')
+
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3) Gecko/20090305 Firefox/3.1b3 GTB5'}
+
+   # target_URL=TARGET_URL_BEFORE_ASIN + ASIN + TARGET_URL_REST + str(1)
+    
+
+
+    for link in read_file:
+        url=link
+        get_rating(url,headers)
+        num=0
+        print(review_page_num)
+        for i in range(1,review_page_num+1):
+            current_page_num = i
+            url=link
+            url=url + TARGET_URL_REST + str(current_page_num)
+            print(url)
+            request = requests.session()
+            req = request.get(url, headers=headers)
+            soup = BeautifulSoup(req.content, 'html.parser')
+            results = soup.findAll("span", {"data-hook": "review-body"})
+            for i in results:
+                try:
+                    num+=1
+                    print(num,i.string)
+                    write_file.write(i.string+'\n')
+                except:
+                    pass
+    read_file.close()
+    write_file.close()       
+
+if __name__=='__main__':
+    main()
