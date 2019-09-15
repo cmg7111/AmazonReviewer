@@ -10,9 +10,11 @@
 
 아마존(http://amazon.com) 의 특정 제품 리뷰데이터 검색 및 AWS Comprehend API를 활용하여 리뷰의 긍 / 부정을 평가하고, 해당 리뷰의 분류 및 워드클라우드를 작성하여 보여주는 웹 서비스
 
-#### System Architecture
+### System Architecture
 ![](https://cmg7111.github.io/amazonreview.png)
 
+* * *
+### 기능
 #### 크롤링(Beautifulsoup4 패키지)
 1) Amazon(http://amazon.com)사이트에서 제품의 이름 검색 및 정보 크롤링(리뷰, 별점 등)
 2) 상위 10개의 제품 크롤링
